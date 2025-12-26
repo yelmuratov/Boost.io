@@ -3,11 +3,15 @@ namespace App\Services;
 
 use App\Models\RefreshToken;
 use App\Models\User;
+use App\Services\SmmPanel\SmmService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class AuthService{
+
+    public function __construct(
+    ){}
     public function register(array $data):array
     {
         $user = User::create([

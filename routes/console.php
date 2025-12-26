@@ -10,5 +10,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:clear-expired-tokens')->everyMinute();
+Schedule::command('app:sync-smm-services')->daily();
+
 
 

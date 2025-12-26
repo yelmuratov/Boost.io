@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 class AuthController extends Controller
 {
     public function __construct(
-        private AuthService $authService
+        private readonly AuthService $authService,
     ){}
 
     public function register(Request $request): JsonResponse

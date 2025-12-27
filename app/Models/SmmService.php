@@ -14,6 +14,7 @@ class SmmService extends Model
         'name',
         'type',
         'category',
+        'cost',
         'rate',
         'min',
         'max',
@@ -24,6 +25,7 @@ class SmmService extends Model
 
     protected $casts = [
         'provider_id' => 'integer',
+        'cost' => 'decimal:4',
         'rate' => 'decimal:4',
         'min' => 'integer',
         'max' => 'integer',

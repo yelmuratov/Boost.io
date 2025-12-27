@@ -14,6 +14,7 @@ class SmmProvider extends Model
         'is_active',
         'verification_status',
         'priority',
+        'markup_percentage',
         'balance',
         'last_sync_at',
         'metadata',
@@ -22,6 +23,7 @@ class SmmProvider extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'priority' => 'integer',
+        'markup_percentage' => 'decimal:2',
         'balance' => 'decimal:2',
         'last_sync_at' => 'datetime',
         'metadata' => 'array',

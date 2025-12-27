@@ -66,13 +66,20 @@ class SyncProviderServicesJob implements ShouldQueue
                         ->where('service_id', $serviceId)
                         ->exists();
 
+                    // Get provider's rate and apply markup
+                    // IMPORTANT: Cast to float because provider API returns strings
+                    $providerRate = (float) ($service['rate'] ?? 0);
+                    $markupPercentage = $this->provider->markup_percentage ?? 25;
+                    $customerRate = $providerRate * (1 + $markupPercentage / 100);
+
                     $this->provider->services()->updateOrCreate(
                         ['service_id' => $serviceId],
                         [
                             'name' => $service['name'] ?? 'Unknown',
                             'type' => $service['type'] ?? 'default',
                             'category' => $service['category'] ?? null,
-                            'rate' => $service['rate'] ?? 0,
+                            'cost' => $providerRate,  // What we pay the provider
+                            'rate' => $customerRate,   // What customer pays (with markup)
                             'min' => $service['min'] ?? null,
                             'max' => $service['max'] ?? null,
                             'description' => $service['description'] ?? null,

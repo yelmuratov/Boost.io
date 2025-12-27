@@ -7,6 +7,7 @@ use App\Services\Admin\SmmProviderService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use App\Http\Resources\Smm\PublicSmmServiceResource;
 use Exception;
 
 class SmmProviderController extends Controller
@@ -50,7 +51,6 @@ class SmmProviderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch providers',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -71,7 +71,6 @@ class SmmProviderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Provider not found',
-                'error' => $e->getMessage(),
             ], 404);
         }
     }
@@ -89,6 +88,7 @@ class SmmProviderController extends Controller
                 'api_key' => 'required|string|max:500',
                 'is_active' => 'boolean',
                 'priority' => 'integer|min:0|max:999',
+                'markup_percentage' => 'numeric|min:0|max:100',
                 'metadata' => 'nullable|array',
             ]);
 
@@ -101,16 +101,11 @@ class SmmProviderController extends Controller
             ], 201);
 
         } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
+            throw $e; // Let global handler process
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create provider',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -128,6 +123,7 @@ class SmmProviderController extends Controller
                 'api_key' => 'string|max:500',
                 'is_active' => 'boolean',
                 'priority' => 'integer|min:0|max:999',
+                'markup_percentage' => 'numeric|min:0|max:100',
                 'metadata' => 'nullable|array',
             ]);
 
@@ -140,16 +136,13 @@ class SmmProviderController extends Controller
             ]);
 
         } catch (ValidationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors(),
-            ], 422);
+            throw $e; // Let global handler process
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update provider',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -168,11 +161,14 @@ class SmmProviderController extends Controller
                 'message' => 'Provider deleted successfully',
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
+        } catch (\App\Exceptions\ApiException $e) {
+            throw $e; // Let global handler process with correct status
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete provider',
-                'error' => $e->getMessage(),
+                'message' => str_contains($e->getMessage(), 'Cannot delete') ? $e->getMessage() : 'Failed to delete provider',
             ], 400);
         }
     }
@@ -193,11 +189,12 @@ class SmmProviderController extends Controller
                 'message' => "Synced {$result['total']} services",
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to sync services',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -218,11 +215,12 @@ class SmmProviderController extends Controller
                 'message' => 'Balance synced successfully',
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to sync balance',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -243,11 +241,12 @@ class SmmProviderController extends Controller
                 'message' => 'Connection successful',
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Connection failed',
-                'error' => $e->getMessage(),
             ], 400);
         }
     }
@@ -267,11 +266,12 @@ class SmmProviderController extends Controller
                 'message' => $provider->is_active ? 'Provider activated' : 'Provider deactivated',
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to toggle provider status',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -290,11 +290,12 @@ class SmmProviderController extends Controller
                 'data' => $stats,
             ]);
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            throw $e; // Let global handler return 404
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch statistics',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -313,7 +314,7 @@ class SmmProviderController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $services->items(),
+                'data' => PublicSmmServiceResource::collection($services->items()),
                 'meta' => [
                     'current_page' => $services->currentPage(),
                     'from' => $services->firstItem(),
@@ -333,7 +334,6 @@ class SmmProviderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch services',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -355,7 +355,6 @@ class SmmProviderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch categories',
-                'error' => $e->getMessage(),
             ], 500);
         }
     }

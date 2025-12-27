@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SmmOrder extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'user_id',
         'provider_id',
@@ -49,6 +51,11 @@ class SmmOrder extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(SmmService::class, 'service_id');
+    }
+
+    public function transaction()
+    {
+        return $this->morphOne(Transaction::class, 'reference');
     }
 }
 

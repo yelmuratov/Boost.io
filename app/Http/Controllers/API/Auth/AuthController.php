@@ -36,13 +36,11 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'errors' => $e->errors()
             ], 422);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Registration failed',
-                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -68,13 +66,11 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'errors' => $e->errors()
             ], 401);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred during login',
-                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -98,13 +94,11 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'errors' => $e->errors()
             ], 401);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Token refresh failed',
-                'error' => $e->getMessage()
             ], 500);
         }
     }
@@ -123,7 +117,6 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'error' => $e->getMessage()
             ], 500);
         }
     }

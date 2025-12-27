@@ -3,10 +3,11 @@ namespace App\Services\Admin;
 
 use App\Models\SmmProvider;
 use App\Services\SmmPanel\SmmService;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Exception;
-
+use App\Models\SmmService as SmmServiceModel;
 class SmmProviderService
 {
     /**
@@ -57,6 +58,7 @@ class SmmProviderService
             'is_active' => $data['is_active'] ?? true,
             'verification_status' => 'pending',
             'priority' => $data['priority'] ?? 0,
+            'markup_percentage' => $data['markup_percentage'] ?? 25,
             'metadata' => $data['metadata'] ?? null,
         ]);
 
@@ -93,6 +95,10 @@ class SmmProviderService
 
         if (isset($data['priority'])) {
             $updateData['priority'] = $data['priority'];
+        }
+
+        if (isset($data['markup_percentage'])) {
+            $updateData['markup_percentage'] = $data['markup_percentage'];
         }
 
         if (isset($data['metadata'])) {
@@ -158,6 +164,12 @@ class SmmProviderService
                         ->where('service_id', $serviceId)
                         ->exists();
 
+                    // Get provider's rate and apply markup
+                    // IMPORTANT: Cast to float because provider API returns strings
+                    $providerRate = (float) ($service['rate'] ?? 0);
+                    $markupPercentage = $provider->markup_percentage ?? 25;
+                    $customerRate = $providerRate * (1 + $markupPercentage / 100);
+
                     $provider->services()->updateOrCreate(
                         [
                             'service_id' => $serviceId,
@@ -166,7 +178,8 @@ class SmmProviderService
                             'name' => $service['name'] ?? 'Unknown',
                             'type' => $service['type'] ?? 'default',
                             'category' => $service['category'] ?? null,
-                            'rate' => $service['rate'] ?? 0,
+                            'cost' => $providerRate,  // What we pay the provider
+                            'rate' => $customerRate,   // What customer pays (with markup)
                             'min' => $service['min'] ?? null,
                             'max' => $service['max'] ?? null,
                             'description' => $service['description'] ?? null,
@@ -285,14 +298,13 @@ class SmmProviderService
      * - The service is active (is_active = true)
      * - The provider is active (is_active = true)
      */
-    public function getActiveServices(int $perPage = 15, array $filters = [])
+    public function getActiveServices(int $perPage = 15, array $filters = []): LengthAwarePaginator
     {
-        $query = \App\Models\SmmService::query()
+        $query = SmmServiceModel::query()
             ->whereHas('provider', function ($q) {
                 $q->where('is_active', true);
             })
-            ->where('is_active', true)
-            ->with('provider:id,name');
+            ->where('is_active', true);
 
         // Apply category filter
         if (isset($filters['category'])) {
@@ -325,7 +337,7 @@ class SmmProviderService
      */
     public function getActiveCategories(): array
     {
-        return \App\Models\SmmService::query()
+        return SmmServiceModel::query()
             ->whereHas('provider', function ($q) {
                 $q->where('is_active', true);
             })

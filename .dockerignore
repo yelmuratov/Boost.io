@@ -1,0 +1,43 @@
+# Version Control
+.git
+.gitignore
+.gitattributes
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Dependencies (will be installed during build)
+/node_modules
+/vendor
+
+# Build artifacts
+/public/hot
+/public/storage
+
+# Storage
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# Testing
+.phpunit.result.cache
+/coverage
+
+# Misc
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.DS_Store
+Thumbs.db

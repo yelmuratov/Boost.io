@@ -6,6 +6,10 @@ echo "Starting Laravel application..."
 # Simple wait for MySQL to be ready (Docker healthcheck should handle this, but add small buffer)
 sleep 5
 
+# Install/update composer dependencies (needed because volume mounts overwrite the built vendor dir)
+echo "Installing dependencies..."
+composer install --no-interaction --prefer-dist --optimize-autoloader 2>/dev/null || echo "Composer install skipped"
+
 # Run migrations
 echo "Running database migrations..."
 php artisan migrate --force --no-interaction || echo "Migrations failed, but continuing..."

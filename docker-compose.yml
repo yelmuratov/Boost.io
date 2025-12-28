@@ -54,8 +54,6 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-boostio}
-      MYSQL_USER: ${DB_USERNAME:-root}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-salimbay_boosttio}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-salimbay_boosttio}
     ports:
       - "3306:3306"

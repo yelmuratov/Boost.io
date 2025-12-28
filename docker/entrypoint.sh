@@ -5,9 +5,17 @@ echo "Starting Laravel application initialization..."
 
 # Wait for database to be ready
 echo "Waiting for database connection..."
-until php artisan db:show 2>/dev/null | grep -q "Connection"; do
-    echo "Database is unavailable - waiting..."
+MAX_TRIES=30
+COUNTER=0
+until mysqladmin ping -h"${DB_HOST:-mysql}" -u"${DB_USERNAME:-root}" -p"${DB_PASSWORD}" --silent 2>/dev/null; do
+    echo "Database is unavailable - waiting... (attempt $COUNTER/$MAX_TRIES)"
     sleep 2
+    COUNTER=$((COUNTER+1))
+    if [ $COUNTER -ge $MAX_TRIES ]; then
+        echo "ERROR: Database connection failed after $MAX_TRIES attempts"
+        echo "Please check your database credentials and that MySQL is running"
+        exit 1
+    fi
 done
 echo "Database is ready!"
 

@@ -16,9 +16,9 @@ services:
     environment:
       - DB_HOST=mysql
       - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE:-boost_io}
-      - DB_USERNAME=${DB_USERNAME:-boost_user}
-      - DB_PASSWORD=${DB_PASSWORD:-boost_password}
+      - DB_DATABASE=${DB_DATABASE:-boostio}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-salimbay_boosttio}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - CACHE_DRIVER=redis
@@ -53,16 +53,16 @@ services:
     container_name: boost_mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-boost_io}
-      MYSQL_USER: ${DB_USERNAME:-boost_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-boost_password}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-boostio}
+      MYSQL_USER: ${DB_USERNAME:-root}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-salimbay_boosttio}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-salimbay_boosttio}
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-root_password}" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD:-salimbay_boosttio}" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -99,9 +99,9 @@ services:
     environment:
       - DB_HOST=mysql
       - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE:-boost_io}
-      - DB_USERNAME=${DB_USERNAME:-boost_user}
-      - DB_PASSWORD=${DB_PASSWORD:-boost_password}
+      - DB_DATABASE=${DB_DATABASE:-boostio}
+      - DB_USERNAME=${DB_USERNAME:-root}
+      - DB_PASSWORD=${DB_PASSWORD:-salimbay_boosttio}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
@@ -125,7 +125,7 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
-      PMA_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD:-salimbay_boosttio}
     depends_on:
       - mysql
     networks:

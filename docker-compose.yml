@@ -109,7 +109,7 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}
-    command: php artisan queue:work --tries=3 --timeout=90
+    command: php artisan queue:work --tries=3 --timeout=300
     depends_on:
       mysql:
         condition: service_healthy

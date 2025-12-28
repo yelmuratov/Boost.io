@@ -19,6 +19,7 @@ services:
       - DB_DATABASE=${DB_DATABASE:-boostio}
       - DB_USERNAME=${DB_USERNAME:-root}
       - DB_PASSWORD=${DB_PASSWORD:-salimbay_boosttio}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-salimbay_boosttio}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - CACHE_DRIVER=redis
@@ -100,6 +101,7 @@ services:
       - DB_DATABASE=${DB_DATABASE:-boostio}
       - DB_USERNAME=${DB_USERNAME:-root}
       - DB_PASSWORD=${DB_PASSWORD:-salimbay_boosttio}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-salimbay_boosttio}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - QUEUE_CONNECTION=${QUEUE_CONNECTION:-database}

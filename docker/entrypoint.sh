@@ -7,7 +7,7 @@ echo "Starting Laravel application initialization..."
 echo "Waiting for database connection..."
 MAX_TRIES=30
 COUNTER=0
-until mysqladmin ping -h"${DB_HOST:-mysql}" -u"${DB_USERNAME:-root}" -p"${DB_PASSWORD}" --silent 2>/dev/null; do
+until mysqladmin ping -h"${DB_HOST:-mysql}" -u"${DB_USERNAME:-root}" -p"${DB_ROOT_PASSWORD:-salimbay_boosttio}" --silent 2>/dev/null; do
     echo "Database is unavailable - waiting... (attempt $COUNTER/$MAX_TRIES)"
     sleep 2
     COUNTER=$((COUNTER+1))

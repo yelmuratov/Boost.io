@@ -16,9 +16,9 @@ php artisan storage:link || echo "Storage link already exists"
 # Cache for production
 if [ "${APP_ENV:-production}" = "production" ]; then
     echo "Caching configuration..."
-    php artisan config:cache
-    php artisan route:cache
-    php artisan view:cache
+    php artisan config:cache 2>/dev/null || echo "Config cache skipped"
+    php artisan route:cache 2>/dev/null || echo "Route cache skipped"  
+    php artisan view:cache 2>/dev/null || echo "View cache skipped"
 fi
 
 # Fix permissions

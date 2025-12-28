@@ -87,6 +87,9 @@ FROM base
 
 WORKDIR /var/www/html
 
+# Copy composer binary for runtime dependency installation
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Copy application files
 COPY . .
 
